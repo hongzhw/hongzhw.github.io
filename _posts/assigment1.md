@@ -2,7 +2,7 @@
 layout: post
 title: 系统设计与分析HW1
 date: 2018-03-11 11:11:00+00:00
-categories: 作业
+categories: 日志
 tags: 博客
 ---
 #简单题
