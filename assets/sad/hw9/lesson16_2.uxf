@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <zoom_level>10</zoom_level>
+  <element>
+    <id>UMLHierarchy</id>
+    <coordinates>
+      <x>250</x>
+      <y>60</y>
+      <w>350</w>
+      <h>550</h>
+    </coordinates>
+    <panel_attributes>type=Package
+com
+	trip
+		Models
+			Location
+			Hotel
+			Room
+			Reservation
+		View
+			SearchForm
+			FindLocationPage
+			ChooseHootelPage
+			HotelPage
+			ReservationPage
+		Control
+			FindHotel
+			ChooseHotel
+			MakeReservation
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
