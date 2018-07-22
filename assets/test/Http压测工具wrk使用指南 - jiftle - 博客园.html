@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<!-- saved from url=(0045)https://www.cnblogs.com/jiftle/p/7158291.html -->
+<html lang="zh-cn"><head><meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="referrer" content="origin">
+<title>Http压测工具wrk使用指南 - jiftle - 博客园</title>
+<link type="text/css" rel="stylesheet" href="./Http压测工具wrk使用指南 - jiftle - 博客园_files/blog-common.css">
+<link id="MainCss" type="text/css" rel="stylesheet" href="./Http压测工具wrk使用指南 - jiftle - 博客园_files/bundle-CodingLife.css">
+<link id="mobile-style" media="only screen and (max-width: 767px)" type="text/css" rel="stylesheet" href="./Http压测工具wrk使用指南 - jiftle - 博客园_files/bundle-CodingLife-mobile.css">
+<link title="RSS" type="application/rss+xml" rel="alternate" href="http://www.cnblogs.com/jiftle/rss">
+<link title="RSD" type="application/rsd+xml" rel="EditURI" href="http://www.cnblogs.com/jiftle/rsd.xml">
+<link type="application/wlwmanifest+xml" rel="wlwmanifest" href="http://www.cnblogs.com/jiftle/wlwmanifest.xml">
+<script async="" src="./Http压测工具wrk使用指南 - jiftle - 博客园_files/analytics.js"></script><script src="./Http压测工具wrk使用指南 - jiftle - 博客园_files/jquery-2.2.0.min.js"></script>
+<script type="text/javascript">var currentBlogApp = 'jiftle', cb_enable_mathjax=false;var isLogined=false;</script>
+<script src="./Http压测工具wrk使用指南 - jiftle - 博客园_files/blog-common.js" type="text/javascript"></script>
+</head>
+<body>
+<a name="top"></a>
+
+<!--done-->
+<div id="home">
+<div id="header">
+	<div id="blogTitle">
+	<a id="lnkBlogLogo" href="http://www.cnblogs.com/jiftle/"><img id="blogLogo" src="./Http压测工具wrk使用指南 - jiftle - 博客园_files/logo.gif" alt="返回主页"></a>			
+		
+<!--done-->
+<h1><a id="Header1_HeaderTitle" class="headermaintitle" href="http://www.cnblogs.com/jiftle/">迷茫的小莱</a></h1>
+<h2></h2>
+
+
+
+		
+	</div><!--end: blogTitle 博客的标题和副标题 -->
+	<div id="navigator">
+		
+<ul id="navList">
+<li><a id="blog_nav_sitehome" class="menu" href="http://www.cnblogs.com/">博客园</a></li>
+<li><a id="blog_nav_myhome" class="menu" href="http://www.cnblogs.com/jiftle/">首页</a></li>
+<li><a id="blog_nav_newpost" class="menu" rel="nofollow" href="https://i.cnblogs.com/EditPosts.aspx?opt=1">新随笔</a></li>
+<li><a id="blog_nav_contact" class="menu" rel="nofollow" href="https://msg.cnblogs.com/send/jiftle">联系</a></li>
+<li><a id="blog_nav_rss" class="menu" href="http://www.cnblogs.com/jiftle/rss">订阅</a>
+<!--<a id="blog_nav_rss_image" class="aHeaderXML" href="http://www.cnblogs.com/jiftle/rss"><img src="//www.cnblogs.com/images/xml.gif" alt="订阅" /></a>--></li>
+<li><a id="blog_nav_admin" class="menu" rel="nofollow" href="https://i.cnblogs.com/">管理</a></li>
+</ul>
+		<div class="blogStats">
+			
+			<div id="blog_stats">
+<span id="stats_post_count">随笔 - 327&nbsp; </span>
+<span id="stats_article_count">文章 - 2&nbsp; </span>
+<span id="stats-comment_count">评论 - 7</span>
+</div>
+			
+		</div><!--end: blogStats -->
+	</div><!--end: navigator 博客导航栏 -->
+</div><!--end: header 头部 -->
+
+<div id="main">
+	<div id="mainContent">
+	<div class="forFlow">
+		
+<div id="post_detail">
+<!--done-->
+<div id="topics">
+	<div class="post">
+		<h1 class="postTitle">
+			<a id="cb_post_title_url" class="postTitle2" href="https://www.cnblogs.com/jiftle/p/7158291.html">Http压测工具wrk使用指南</a>
+		</h1>
+		<div class="clear"></div>
+		<div class="postBody">
+			<div id="cnblogs_post_body" class="blogpost-body"><p>用过了很多压测工具，却一直没找到中意的那款。最近试了wrk感觉不错，写下这份使用指南给自己备忘用，如果能帮到你，那也很好。</p>
+<h3 id="安装">安装</h3>
+<p>wrk支持大多数类UNIX系统，不支持windows。需要操作系统支持LuaJIT和OpenSSL，不过不用担心，大多数类Unix系统都支持。安装wrk非常简单，只要从github上下载wrk源码，在项目路径下执行make命令即可。</p>
+<pre><code class="hljs go">git clone https:<span class="hljs-comment">//github.com/wg/wrk
+
+<span class="hljs-built_in">make</span></span></code></pre>
+<p>make之后，会在项目路径下生成可执行文件wrk，随后就可以用其进行HTTP压测了。可以把这个可执行文件拷贝到某个已在path中的路径，比如/usr/local/bin，这样就可以在任何路径直接使用wrk了。</p>
+<p>默认情况下wrk会使用自带的LuaJIT和OpenSSL，如果你想使用系统已安装的版本，可以使用WITH_LUAJIT和WITH_OPENSSL这两个选项来指定它们的路径。比如：</p>
+<pre><code class="hljs javascript">make WITH_LUAJIT=<span class="hljs-regexp">/usr WITH_OPENSSL=/usr</span></code></pre>
+<h3 id="基本使用">基本使用</h3>
+<ol>
+<li>命令行敲下wrk，可以看到使用帮助</li>
+</ol>
+<pre><code class="hljs dts"><span class="hljs-symbol">Usage: wrk <span class="hljs-params">&lt;options&gt; <span class="hljs-params">&lt;url&gt;                            
+<span class="hljs-symbol">  Options:                                            
+    -c, --connections <span class="hljs-params">&lt;N&gt;  Connections to keep open   
+    -d, --duration    <span class="hljs-params">&lt;T&gt;  Duration of test           
+    -t, --threads     <span class="hljs-params">&lt;N&gt;  Number of threads to use   
+                                                      
+    -s, --script      <span class="hljs-params">&lt;S&gt;  Load Lua script file       
+    -H, --header      <span class="hljs-params">&lt;H&gt;  Add header to request      
+        --latency          Print latency statistics   
+        --timeout     <span class="hljs-params">&lt;T&gt;  Socket/request timeout     
+    -v, --version          Print version details      
+                                                      
+  Numeric arguments may include a SI unit (<span class="hljs-number">1k, <span class="hljs-number">1M, <span class="hljs-number">1G)
+  Time arguments may include a time unit (<span class="hljs-number">2s, <span class="hljs-number">2m, <span class="hljs-number">2h)</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre>
+<p>简单翻成中文：</p>
+<pre><code class="hljs dts">使用方法: wrk <span class="hljs-params">&lt;选项&gt; <span class="hljs-params">&lt;被测HTTP服务的URL&gt;                            
+<span class="hljs-symbol">  Options:                                            
+    -c, --connections <span class="hljs-params">&lt;N&gt;  跟服务器建立并保持的TCP连接数量  
+    -d, --duration    <span class="hljs-params">&lt;T&gt;  压测时间           
+    -t, --threads     <span class="hljs-params">&lt;N&gt;  使用多少个线程进行压测   
+                                                      
+    -s, --script      <span class="hljs-params">&lt;S&gt;  指定Lua脚本路径       
+    -H, --header      <span class="hljs-params">&lt;H&gt;  为每一个HTTP请求添加HTTP头      
+        --latency          在压测结束后，打印延迟统计信息   
+        --timeout     <span class="hljs-params">&lt;T&gt;  超时时间     
+    -v, --version          打印正在使用的wrk的详细版本信息
+                                                      
+  <span class="hljs-params">&lt;N&gt;代表数字参数，支持国际单位 (<span class="hljs-number">1k, <span class="hljs-number">1M, <span class="hljs-number">1G)
+  <span class="hljs-params">&lt;T&gt;代表时间参数，支持时间单位 (<span class="hljs-number">2s, <span class="hljs-number">2m, <span class="hljs-number">2h)</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre>
+<ol>
+<li>看下版本</li>
+</ol>
+<pre><code class="hljs css"><span class="hljs-selector-tag">wrk <span class="hljs-selector-tag">-v
+
+输出：
+<span class="hljs-selector-tag">wrk 4<span class="hljs-selector-class">.0<span class="hljs-selector-class">.2 <span class="hljs-selector-attr">[epoll] <span class="hljs-selector-tag">Copyright (<span class="hljs-selector-tag">C) 2012 <span class="hljs-selector-tag">Will <span class="hljs-selector-tag">Glozer</span></span></span></span></span></span></span></span></span></span></code></pre>
+<p>看到是4.0.2版本的wrk，使用了epoll。这意味着我们可以用少量的线程来跟被测服务创建大量连接，进行压测。</p>
+<ol>
+<li>做一次简单压测，分析下结果</li>
+</ol>
+<pre><code class="hljs erlang">wrk -t8 -c200 -d30s --latency  <span class="hljs-string">"http://www.bing.com"
+
+输出：
+Running <span class="hljs-number">30s test @ http://www.bing.com
+  <span class="hljs-number">8 threads <span class="hljs-keyword">and <span class="hljs-number">200 connections
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+    Latency    <span class="hljs-number">46.67ms  <span class="hljs-number">215.38ms   <span class="hljs-number">1.67s    <span class="hljs-number">95.59<span class="hljs-comment">%
+    Req/Sec     <span class="hljs-number">7.91k     <span class="hljs-number">1.15k   <span class="hljs-number">10.26k    <span class="hljs-number">70.77<span class="hljs-comment">%
+  Latency Distribution
+     <span class="hljs-number">50<span class="hljs-comment">%    2.93ms
+     <span class="hljs-number">75<span class="hljs-comment">%    3.78ms
+     <span class="hljs-number">90<span class="hljs-comment">%    4.73ms
+     <span class="hljs-number">99<span class="hljs-comment">%    1.35s 
+  <span class="hljs-number">1790465 requests in <span class="hljs-number">30.01s, <span class="hljs-number">684.08MB read
+Requests/sec:  <span class="hljs-number">59658.29
+Transfer/sec:     <span class="hljs-number">22.79MB</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre>
+<p>以上使用8个线程200个连接，对bing首页进行了30秒的压测，并要求在压测结果中输出响应延迟信息。以下对压测结果进行简单注释：</p>
+<pre><code class="hljs erlang">Running <span class="hljs-number">30s test @ http://www.bing.com （压测时间<span class="hljs-number">30s）
+  <span class="hljs-number">8 threads <span class="hljs-keyword">and <span class="hljs-number">200 connections （共<span class="hljs-number">8个测试线程，<span class="hljs-number">200个连接）
+  Thread Stats   Avg      Stdev     Max   +/- Stdev
+              （平均值） （标准差）（最大值）（正负一个标准差所占比例）
+    Latency    <span class="hljs-number">46.67ms  <span class="hljs-number">215.38ms   <span class="hljs-number">1.67s    <span class="hljs-number">95.59<span class="hljs-comment">%
+    （延迟）
+    Req/Sec     <span class="hljs-number">7.91k     <span class="hljs-number">1.15k   <span class="hljs-number">10.26k    <span class="hljs-number">70.77<span class="hljs-comment">%
+    （处理中的请求数）
+  Latency Distribution （延迟分布）
+     <span class="hljs-number">50<span class="hljs-comment">%    2.93ms
+     <span class="hljs-number">75<span class="hljs-comment">%    3.78ms
+     <span class="hljs-number">90<span class="hljs-comment">%    4.73ms
+     <span class="hljs-number">99<span class="hljs-comment">%    1.35s （99分位的延迟）
+  <span class="hljs-number">1790465 requests in <span class="hljs-number">30.01s, <span class="hljs-number">684.08MB read （<span class="hljs-number">30.01秒内共处理完成了<span class="hljs-number">1790465个请求，读取了<span class="hljs-number">684.08MB数据）
+Requests/sec:  <span class="hljs-number">59658.29 （平均每秒处理完成<span class="hljs-number">59658.29个请求）
+Transfer/sec:     <span class="hljs-number">22.79MB （平均每秒读取数据<span class="hljs-number">22.79MB）</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre>
+<p>可以看到，wrk使用方便，结果清晰。并且因为非阻塞IO的使用，可以在普通的测试机上创建出大量的连接，从而达到较好的压测效果。</p>
+<h3 id="使用lua脚本个性化wrk压测">使用Lua脚本个性化wrk压测</h3>
+<p>以上两节安装并简单使用了wrk，但这种简单的压测可能不能满足我们的需求。比如我们可能需要使用POST METHOD跟服务器交互；可能需要为每一次请求使用不同的参数，以更好的模拟服务的实际使用场景等。wrk支持用户使用--script指定Lua脚本，来定制压测过程，满足个性化需求。</p>
+<ol>
+<li>介绍wrk对Lua脚本的支持</li>
+</ol>
+<p>wrk支持在三个阶段对压测进行个性化，分别是启动阶段、运行阶段和结束阶段。每个测试线程，都拥有独立的Lua运行环境。</p>
+<h5 id="启动阶段">启动阶段</h5>
+<pre><code class="hljs matlab"><span class="hljs-function"><span class="hljs-keyword">function <span class="hljs-title">setup<span class="hljs-params">(thread)</span></span></span></span></code></pre>
+<p>在脚本文件中实现setup方法，wrk就会在测试线程已经初始化但还没有启动的时候调用该方法。wrk会为每一个测试线程调用一次setup方法，并传入代表测试线程的对象thread作为参数。setup方法中可操作该thread对象，获取信息、存储信息、甚至关闭该线程。</p>
+<pre><code class="hljs vbnet">thread.addr             - <span class="hljs-keyword">get <span class="hljs-keyword">or <span class="hljs-keyword">set the thread<span class="hljs-comment">'s server address
+thread:<span class="hljs-keyword">get(name)        - <span class="hljs-keyword">get the value <span class="hljs-keyword">of a <span class="hljs-keyword">global <span class="hljs-keyword">in the thread<span class="hljs-comment">'s env
+thread:<span class="hljs-keyword">set(name, value) - <span class="hljs-keyword">set the value <span class="hljs-keyword">of a <span class="hljs-keyword">global <span class="hljs-keyword">in the thread<span class="hljs-comment">'s env
+thread:<span class="hljs-keyword">stop()           - <span class="hljs-keyword">stop the thread</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre>
+<h5 id="运行阶段">运行阶段</h5>
+<pre><code class="hljs matlab"><span class="hljs-function"><span class="hljs-keyword">function <span class="hljs-title">init<span class="hljs-params">(args)
+<span class="hljs-function"><span class="hljs-keyword">function <span class="hljs-title">delay<span class="hljs-params">()
+<span class="hljs-function"><span class="hljs-keyword">function <span class="hljs-title">request<span class="hljs-params">()
+<span class="hljs-function"><span class="hljs-keyword">function <span class="hljs-title">response<span class="hljs-params">(status, headers, body)</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre>
+<p>init由测试线程调用，只会在进入运行阶段时，调用一次。支持从启动wrk的命令中，获取命令行参数；<br>delay在每次发送request之前调用，如果需要delay，那么delay相应时间；<br>request用来生成请求；每一次请求都会调用该方法，所以注意不要在该方法中做耗时的操作；<br>reponse在每次收到一个响应时调用；为提升性能，如果没有定义该方法，那么wrk不会解析headers和body；</p>
+<h5 id="结束阶段">结束阶段</h5>
+<pre><code class="hljs matlab"><span class="hljs-function"><span class="hljs-keyword">function <span class="hljs-title">done<span class="hljs-params">(summary, latency, requests)</span></span></span></span></code></pre>
+<p>该方法在整个测试过程中只会调用一次，可从参数给定的对象中，获取压测结果，生成定制化的测试报告。</p>
+<h5 id="自定义脚本中可访问的变量和方法">自定义脚本中可访问的变量和方法</h5>
+<p>变量：wrk</p>
+<pre><code class="hljs swift"> wrk = {
+    scheme  = <span class="hljs-string">"http",
+    host    = <span class="hljs-string">"localhost",
+    port    = <span class="hljs-literal">nil,
+    method  = <span class="hljs-string">"GET",
+    path    = <span class="hljs-string">"/",
+    headers = {},
+    body    = <span class="hljs-literal">nil,
+    thread  = &lt;userdata&gt;,
+  }</span></span></span></span></span></span></code></pre>
+<p>一个table类型的变量wrk，是全局变量，修改该table，会影响所有请求。</p>
+<p>方法：wrk.fomat wrk.lookup wrk.connect</p>
+<pre><code class="hljs lua">  <span class="hljs-function"><span class="hljs-keyword">function <span class="hljs-title">wrk.format<span class="hljs-params">(method, path, headers, body)
+
+    wrk.format returns a HTTP request <span class="hljs-built_in">string containing the passed parameters
+    merged with values from the wrk <span class="hljs-built_in">table.
+    根据参数和全局变量wrk，生成一个HTTP rquest <span class="hljs-built_in">string。
+
+  <span class="hljs-function"><span class="hljs-keyword">function <span class="hljs-title">wrk.lookup<span class="hljs-params">(host, service)
+
+    wrk.lookup returns a <span class="hljs-built_in">table containing all known addresses <span class="hljs-keyword">for the host
+    <span class="hljs-keyword">and service pair. This corresponds to the POSIX getaddrinfo() <span class="hljs-function"><span class="hljs-keyword">function.
+    给定<span class="hljs-title">host和<span class="hljs-title">service（<span class="hljs-title">port/<span class="hljs-title">well <span class="hljs-title">known <span class="hljs-title">service <span class="hljs-title">name），返回所有可用的服务器地址信息。
+
+  <span class="hljs-title">function <span class="hljs-title">wrk.connect<span class="hljs-params">(addr)
+
+    wrk.connect returns <span class="hljs-keyword">true <span class="hljs-keyword">if the address can be connected to, otherwise
+    it returns <span class="hljs-keyword">false. The address must be one returned from wrk.lookup().
+    测试与给定的服务器地址信息是否可以成功创建连接</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre>
+<ol>
+<li>示例</li>
+</ol>
+<h5 id="使用post-method">使用POST METHOD</h5>
+<pre><code class="hljs prolog">wrk.method = <span class="hljs-string">"POST"
+wrk.body   = <span class="hljs-string">"foo=bar&amp;baz=quux"
+wrk.headers[<span class="hljs-string">"Content-Type"] = <span class="hljs-string">"application/x-www-form-urlencoded"</span></span></span></span></code></pre>
+<p>通过修改全局变量wrk，使得所有请求都使用POST方法，并指定了body和Content-Type头。</p>
+<h5 id="为每次request更换一个参数">为每次request更换一个参数</h5>
+<pre><code class="hljs lua">request = <span class="hljs-function"><span class="hljs-keyword">function<span class="hljs-params">()
+   uid = <span class="hljs-built_in">math.random(<span class="hljs-number">1, <span class="hljs-number">10000000)
+   path = <span class="hljs-string">"/test?uid=" .. uid
+   <span class="hljs-keyword">return wrk.format(<span class="hljs-keyword">nil, path)
+<span class="hljs-keyword">end</span></span></span></span></span></span></span></span></span></span></code></pre>
+<p>通过在request方法中随机生成1~10000000之间的uid，使得请求中的uid参数随机。</p>
+<h5 id="每次请求之前延迟10ms">每次请求之前延迟10ms</h5>
+<pre><code class="hljs matlab"><span class="hljs-function"><span class="hljs-keyword">function <span class="hljs-title">delay<span class="hljs-params">()
+   <span class="hljs-keyword">return <span class="hljs-number">10
+<span class="hljs-keyword">end</span></span></span></span></span></span></span></code></pre>
+<h5 id="每个线程要先进行认证认证之后获取token以进行压测">每个线程要先进行认证，认证之后获取token以进行压测</h5>
+<pre><code class="hljs lua">token = <span class="hljs-keyword">nil
+path  = <span class="hljs-string">"/authenticate"
+
+request = <span class="hljs-function"><span class="hljs-keyword">function<span class="hljs-params">()
+   <span class="hljs-keyword">return wrk.format(<span class="hljs-string">"GET", path)
+<span class="hljs-keyword">end
+
+response = <span class="hljs-function"><span class="hljs-keyword">function<span class="hljs-params">(status, headers, body)
+   <span class="hljs-keyword">if <span class="hljs-keyword">not token <span class="hljs-keyword">and status == <span class="hljs-number">200 <span class="hljs-keyword">then
+      token = headers[<span class="hljs-string">"X-Token"]
+      path  = <span class="hljs-string">"/resource"
+      wrk.headers[<span class="hljs-string">"X-Token"] = token
+   <span class="hljs-keyword">end
+<span class="hljs-keyword">end</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre>
+<p>在没有token的情况下，先访问/authenticate认证。认证成功后，读取token并替换path为/resource。</p>
+<h5 id="压测支持http-pipeline的服务">压测支持HTTP pipeline的服务</h5>
+<pre><code class="hljs lua">init = <span class="hljs-function"><span class="hljs-keyword">function<span class="hljs-params">(args)
+   <span class="hljs-keyword">local r = {}
+   r[<span class="hljs-number">1] = wrk.format(<span class="hljs-keyword">nil, <span class="hljs-string">"/?foo")
+   r[<span class="hljs-number">2] = wrk.format(<span class="hljs-keyword">nil, <span class="hljs-string">"/?bar")
+   r[<span class="hljs-number">3] = wrk.format(<span class="hljs-keyword">nil, <span class="hljs-string">"/?baz")
+
+   req = <span class="hljs-built_in">table.concat(r)
+<span class="hljs-keyword">end
+
+request = <span class="hljs-function"><span class="hljs-keyword">function<span class="hljs-params">()
+   <span class="hljs-keyword">return req
+<span class="hljs-keyword">end</span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></span></code></pre>
+<p>通过在init方法中将三个HTTP request请求拼接在一起，实现每次发送三个请求，以使用HTTP pipeline。</p>
+<h3 id="最后">最后</h3>
+<p>源码非常简洁，简单读了读，很佩服wrk的作者。</p>
+<p>&nbsp;</p>
+<p>原文：&nbsp;<a href="http://www.cnblogs.com/xinzhao/p/6233009.html" target="_blank">http://www.cnblogs.com/xinzhao/p/6233009.html</a></p>
+<p>&nbsp;</p></div><div id="MySignature"></div>
+<div class="clear"></div>
+<div id="blog_post_info_block">
+<div id="BlogPostCategory"></div>
+<div id="EntryTag">标签: <a href="http://www.cnblogs.com/jiftle/tag/%E5%8E%8B%E6%B5%8B/">压测</a></div>
+<div id="blog_post_info"><div id="green_channel">
+        <a href="javascript:void(0);" id="green_channel_digg" onclick="DiggIt(7158291,cb_blogId,1);green_channel_success(this,&#39;谢谢推荐！&#39;);">好文要顶</a>
+            <a id="green_channel_follow" onclick="follow(&#39;db0a2cfb-5570-df11-ba8f-001cf0cd104b&#39;);" href="javascript:void(0);">关注我</a>
+    <a id="green_channel_favorite" onclick="AddToWz(cb_entryId);return false;" href="javascript:void(0);">收藏该文</a>
+    <a id="green_channel_weibo" href="javascript:void(0);" title="分享至新浪微博" onclick="ShareToTsina()"><img src="./Http压测工具wrk使用指南 - jiftle - 博客园_files/icon_weibo_24.png" alt=""></a>
+    <a id="green_channel_wechat" href="javascript:void(0);" title="分享至微信" onclick="shareOnWechat()"><img src="./Http压测工具wrk使用指南 - jiftle - 博客园_files/wechat.png" alt=""></a>
+</div>
+<div id="author_profile">
+    <div id="author_profile_info" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/jiftle/" target="_blank"><img src="./Http压测工具wrk使用指南 - jiftle - 博客园_files/u137928.gif" class="author_avatar" alt=""></a>
+        <div id="author_profile_detail" class="author_profile_info">
+            <a href="http://home.cnblogs.com/u/jiftle/">jiftle</a><br>
+            <a href="http://home.cnblogs.com/u/jiftle/followees">关注 - 4</a><br>
+            <a href="http://home.cnblogs.com/u/jiftle/followers">粉丝 - 0</a>
+        </div>
+    </div>
+    <div class="clear"></div>
+    <div id="author_profile_honor"></div>
+    <div id="author_profile_follow">
+                <a href="javascript:void(0);" onclick="follow(&#39;db0a2cfb-5570-df11-ba8f-001cf0cd104b&#39;);return false;">+加关注</a>
+    </div>
+</div>
+<div id="div_digg">
+    <div class="diggit" onclick="votePost(7158291,&#39;Digg&#39;)">
+        <span class="diggnum" id="digg_count">1</span>
+    </div>
+    <div class="buryit" onclick="votePost(7158291,&#39;Bury&#39;)">
+        <span class="burynum" id="bury_count">0</span>
+    </div>
+    <div class="clear"></div>
+    <div class="diggword" id="digg_tips">
+    </div>
+</div>
+<script type="text/javascript">
+    currentDiggType = 0;
+</script></div>
+<div class="clear"></div>
+<div id="post_next_prev"><a href="http://www.cnblogs.com/jiftle/p/7156832.html" class="p_n_p_prefix">« </a> 上一篇：<a href="http://www.cnblogs.com/jiftle/p/7156832.html" title="发布于2017-07-12 18:03">deepin linux下eclipse c/c++ 调试开源代码</a><br><a href="http://www.cnblogs.com/jiftle/p/7190478.html" class="p_n_p_prefix">» </a> 下一篇：<a href="http://www.cnblogs.com/jiftle/p/7190478.html" title="发布于2017-07-16 14:30">deepin linux下python安装mysqldb</a><br></div>
+</div>
+
+
+		</div>
+		<div class="postDesc">posted @ <span id="post-date">2017-07-13 00:06</span> <a href="http://www.cnblogs.com/jiftle/">jiftle</a> 阅读(<span id="post_view_count">3291</span>) 评论(<span id="post_comment_count">0</span>)  <a href="https://i.cnblogs.com/EditPosts.aspx?postid=7158291" rel="nofollow">编辑</a> <a href="https://www.cnblogs.com/jiftle/p/7158291.html#" onclick="AddToWz(7158291);return false;">收藏</a></div>
+	</div>
+	<script type="text/javascript">var allowComments=true,cb_blogId=71607,cb_entryId=7158291,cb_blogApp=currentBlogApp,cb_blogUserGuid='db0a2cfb-5570-df11-ba8f-001cf0cd104b',cb_entryCreatedDate='2017/7/13 0:06:00';loadViewCount(cb_entryId);var cb_postType=1;</script>
+	
+</div><!--end: topics 文章、评论容器-->
+</div><a name="!comments"></a><div id="blog-comments-placeholder"></div><script type="text/javascript">var commentManager = new blogCommentManager();commentManager.renderComments(0);</script>
+<div id="comment_form" class="commentform">
+<a name="commentform"></a>
+<div id="divCommentShow"></div>
+<div id="comment_nav"><span id="span_refresh_tips"></span><a href="javascript:void(0);" onclick="return RefreshCommentList();" id="lnk_RefreshComments" runat="server" clientidmode="Static">刷新评论</a><a href="https://www.cnblogs.com/jiftle/p/7158291.html#" onclick="return RefreshPage();">刷新页面</a><a href="https://www.cnblogs.com/jiftle/p/7158291.html#top">返回顶部</a></div>
+<div id="comment_form_container"><div class="login_tips">注册用户登录后才能发表评论，请 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return login(&#39;commentform&#39;);">登录</a> 或 <a rel="nofollow" href="javascript:void(0);" class="underline" onclick="return register();">注册</a>，<a href="http://www.cnblogs.com/">访问</a>网站首页。</div></div>
+<div class="ad_text_commentbox" id="ad_text_under_commentbox"></div>
+<div id="ad_t2"><a href="http://www.ucancode.com/index.htm" target="_blank">【推荐】超50万VC++源码: 大型组态工控、电力仿真CAD与GIS源码库！</a><br><a href="https://cloud.tencent.com/developer/labs?fromSource=gwzcw.1087957.1087957.1087957" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-T2 - 腾讯云&#39;)">【推荐】如何快速搭建人工智能应用？</a><br><a href="https://cloud.tencent.com/developer/salon/activity-1078?fromSource=gwzcw.1110771.1110771.1110771" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-T2-AI&#39;)">【活动】AI技术全面场景化落地实践</a><br><a href="http://challenge.xfyun.cn/?ch=bk" target="_blank" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;T2-xfyun&#39;)">【大赛】2018首届“顶天立地”AI开发者大赛</a><br></div>
+<div id="opt_under_post"></div>
+<div id="cnblogs_c1" class="c_ad_block"><a href="https://cloud.tencent.com/act/campus?fromSource=gwzcw.1087959.1087959.1087959" target="_blank"><img width="300" height="250" src="./Http压测工具wrk使用指南 - jiftle - 博客园_files/24442-20180710085714894-1703644023.jpg" alt="腾讯云0710" onclick="ga(&#39;send&#39;, &#39;event&#39;, &#39;Link&#39;, &#39;click&#39;, &#39;C1&#39;);"></a></div>
+<div id="under_post_news"><div class="itnews c_ad_block"><b>最新IT新闻</b>:<br> ·  <a href="https://news.cnblogs.com/n/602403/" target="_blank">程序员的群体性焦虑高压下，如何实现个体的线性增长？</a><br> ·  <a href="https://news.cnblogs.com/n/602402/" target="_blank">南京银隆被封查！银隆的“董明珠”早已不是格力的“董小姐”</a><br> ·  <a href="https://news.cnblogs.com/n/602384/" target="_blank">Netflix准备颠覆宝莱坞？</a><br> ·  <a href="https://news.cnblogs.com/n/602379/" target="_blank">SAP二季度业绩超华尔街预期  云业务增长强劲助其实现60亿欧元营收</a><br> ·  <a href="https://news.cnblogs.com/n/602401/" target="_blank">长江商学院教授薛云奎：小米定价仍有被高估的嫌疑</a><br>» <a href="http://news.cnblogs.com/" title="IT新闻" target="_blank">更多新闻...</a></div></div>
+<div id="cnblogs_c2" class="c_ad_block"><a href="http://click.aliyun.com/m/34770/" target="_blank"><img src="./Http压测工具wrk使用指南 - jiftle - 博客园_files/TB1gBPhgZLJ8KJjy0FnXXcFDpXa-468-60.jpg" alt="" style="width: 468px; height: 60px;"></a></div>
+<div id="under_post_kb"><div class="itnews c_ad_block" id="kb_block"><b>最新知识库文章</b>:<br><div id="kb_recent"> ·  <a href="http://kb.cnblogs.com/page/602061/" target="_blank">观察之道：带你走进可观察性</a><br> ·  <a href="http://kb.cnblogs.com/page/598963/" target="_blank">危害程序员职业生涯的三大观念</a><br> ·  <a href="http://kb.cnblogs.com/page/601061/" target="_blank">断点单步跟踪是一种低效的调试方法</a><br> ·  <a href="http://kb.cnblogs.com/page/600804/" target="_blank">测试 | 让每一粒尘埃有的放矢</a><br> ·  <a href="http://kb.cnblogs.com/page/599854/" target="_blank">从Excel到微服务</a><br></div>» <a href="http://kb.cnblogs.com/" target="_blank">更多知识库文章...</a></div></div>
+<div id="HistoryToday" class="c_ad_block"></div>
+<script type="text/javascript">
+    fixPostBody();
+    setTimeout(function () { incrementViewCount(cb_entryId); }, 50);
+    deliverAdT2();
+    deliverAdC1();
+    deliverAdC2();    
+    loadNewsAndKb();
+    loadBlogSignature();
+    LoadPostInfoBlock(cb_blogId, cb_entryId, cb_blogApp, cb_blogUserGuid);
+    GetPrevNextPost(cb_entryId, cb_blogId, cb_entryCreatedDate, cb_postType);
+    loadOptUnderPost();
+    GetHistoryToday(cb_blogId, cb_blogApp, cb_entryCreatedDate);   
+</script>
+</div>
+
+
+	</div><!--end: forFlow -->
+	</div><!--end: mainContent 主体内容容器-->
+
+	<div id="sideBar">
+		<div id="sideBarMain">
+			
+<!--done-->
+<div class="newsItem">
+<h3 class="catListTitle">公告</h3>
+	<div id="blog-news"><div style="display: none" id="__document_write_ajax_div-1"></div><script>window['__document_write_ajax_callbacks__']['1']();</script>
+
+<style>
+.pro_name a{color: #4183c4;}
+.osc_git_title{background-color: #fff;}
+.osc_git_box{background-color: #fff;}
+.osc_git_box{border-color: #E3E9ED;}
+.osc_git_info{color: #666;}
+.osc_git_main a{color: #9B9B9B;}
+</style><div id="profile_block">昵称：<a href="https://home.cnblogs.com/u/jiftle/">jiftle</a><br>园龄：<a href="https://home.cnblogs.com/u/jiftle/" title="入园时间：2010-06-05">8年1个月</a><br>粉丝：<a href="https://home.cnblogs.com/u/jiftle/followers/">0</a><br>关注：<a href="https://home.cnblogs.com/u/jiftle/followees/">4</a><div id="p_b_follow"><a href="javascript:void(0);" onclick="follow(&#39;db0a2cfb-5570-df11-ba8f-001cf0cd104b&#39;)">+加关注</a></div><script type="text/javascript">window['__document_write_ajax_callbacks__']['3']();</script><script>window['__document_write_ajax_callbacks__']['2']();</script></div></div><script type="text/javascript">loadBlogNews();</script>
+</div>
+
+			<div id="blog-calendar" style=""><table id="blogCalendar" class="Cal" cellspacing="0" cellpadding="0" title="Calendar">
+	<tbody><tr><td colspan="7"><table class="CalTitle" cellspacing="0">
+		<tbody><tr><td class="CalNextPrev"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2018/06/01&#39;);return false;">&lt;</a></td><td align="center">2018年7月</td><td class="CalNextPrev" align="right"><a href="javascript:void(0);" onclick="loadBlogCalendar(&#39;2018/08/01&#39;);return false;">&gt;</a></td></tr>
+	</tbody></table></td></tr><tr><th class="CalDayHeader" align="center" abbr="日" scope="col">日</th><th class="CalDayHeader" align="center" abbr="一" scope="col">一</th><th class="CalDayHeader" align="center" abbr="二" scope="col">二</th><th class="CalDayHeader" align="center" abbr="三" scope="col">三</th><th class="CalDayHeader" align="center" abbr="四" scope="col">四</th><th class="CalDayHeader" align="center" abbr="五" scope="col">五</th><th class="CalDayHeader" align="center" abbr="六" scope="col">六</th></tr><tr><td class="CalOtherMonthDay" align="center">24</td><td class="CalOtherMonthDay" align="center">25</td><td class="CalOtherMonthDay" align="center">26</td><td class="CalOtherMonthDay" align="center">27</td><td class="CalOtherMonthDay" align="center">28</td><td class="CalOtherMonthDay" align="center">29</td><td class="CalOtherMonthDay" align="center">30</td></tr><tr><td class="CalWeekendDay" align="center">1</td><td align="center"><a href="http://www.cnblogs.com/jiftle/archive/2018/07/02.html"><u>2</u></a></td><td align="center">3</td><td align="center"><a href="http://www.cnblogs.com/jiftle/archive/2018/07/04.html"><u>4</u></a></td><td align="center">5</td><td align="center"><a href="http://www.cnblogs.com/jiftle/archive/2018/07/06.html"><u>6</u></a></td><td class="CalWeekendDay" align="center">7</td></tr><tr><td class="CalWeekendDay" align="center">8</td><td align="center"><a href="http://www.cnblogs.com/jiftle/archive/2018/07/09.html"><u>9</u></a></td><td align="center">10</td><td align="center">11</td><td align="center">12</td><td align="center">13</td><td class="CalWeekendDay" align="center">14</td></tr><tr><td class="CalWeekendDay" align="center">15</td><td align="center">16</td><td align="center">17</td><td align="center">18</td><td align="center">19</td><td align="center">20</td><td class="CalWeekendDay" align="center">21</td></tr><tr><td class="CalTodayDay" align="center">22</td><td align="center">23</td><td align="center">24</td><td align="center">25</td><td align="center">26</td><td align="center">27</td><td class="CalWeekendDay" align="center">28</td></tr><tr><td class="CalWeekendDay" align="center">29</td><td align="center">30</td><td align="center">31</td><td class="CalOtherMonthDay" align="center">1</td><td class="CalOtherMonthDay" align="center">2</td><td class="CalOtherMonthDay" align="center">3</td><td class="CalOtherMonthDay" align="center">4</td></tr>
+</tbody></table></div><script type="text/javascript">loadBlogDefaultCalendar();</script>
+			
+			<div id="leftcontentcontainer">
+				<div id="blog-sidecolumn"><div id="sidebar_search" class="sidebar-block">
+<div id="sidebar_search" class="mySearch">
+<h3 class="catListTitle">搜索</h3>
+<div id="sidebar_search_box">
+<div id="widget_my_zzk" class="div_my_zzk"><input type="text" id="q" onkeydown="return zzk_go_enter(event);" class="input_my_zzk">&nbsp;<input onclick="zzk_go()" type="button" value="找找看" id="btnZzk" class="btn_my_zzk"></div>
+
+</div>
+</div>
+
+</div><div id="sidebar_shortcut" class="sidebar-block">
+<div class="catListLink">
+<h3 class="catListTitle">常用链接</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/jiftle/p/" title="我的博客的随笔列表">我的随笔</a></li><li><a href="http://www.cnblogs.com/jiftle/MyComments.html" title="我发表过的评论列表">我的评论</a></li><li><a href="http://www.cnblogs.com/jiftle/OtherPosts.html" title="我评论过的随笔列表">我的参与</a></li><li><a href="http://www.cnblogs.com/jiftle/RecentComments.html" title="我的博客的评论列表">最新评论</a></li><li><a href="http://www.cnblogs.com/jiftle/tag/" title="我的博客的标签列表">我的标签</a></li>
+</ul>
+<div id="itemListLin_con" style="display:none;">
+<ul>
+
+</ul>
+</div>
+</div></div><div id="sidebar_recentposts" class="sidebar-block">
+<div class="catListEssay">
+<h3 class="catListTitle">最新随笔</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/jiftle/p/9282811.html">1. vim添加复制（crtl+c）,粘贴（ctrl+v）ctrl+A 等快捷键</a></li><li><a href="http://www.cnblogs.com/jiftle/p/9273913.html">2. log4j日志级别</a></li><li><a href="http://www.cnblogs.com/jiftle/p/9264226.html">3. 概要设计说明书（转载自国家计算机标准和文件模板）</a></li><li><a href="http://www.cnblogs.com/jiftle/p/9263324.html">4. 软件需求分析文档模版（转载自国家计算机标准和文件模板）</a></li><li><a href="http://www.cnblogs.com/jiftle/p/9253585.html">5. 新概念英语 第二册 课文</a></li><li><a href="http://www.cnblogs.com/jiftle/p/9244693.html">6. 程序员的自我进化——补上最短的那块情商木板</a></li><li><a href="http://www.cnblogs.com/jiftle/p/9198358.html">7. python 字符和数值转换</a></li><li><a href="http://www.cnblogs.com/jiftle/p/9194763.html">8. Python 进行 SSH 操作，实现本地与服务器的链接，进行文件的上传和下载</a></li><li><a href="http://www.cnblogs.com/jiftle/p/9190838.html">9. TensorFlow学习资源</a></li><li><a href="http://www.cnblogs.com/jiftle/p/9190815.html">10. TensorFlow机器学习框架-学习笔记-001</a></li>
+</ul>
+</div>
+</div><div id="sidebar_toptags" class="sidebar-block">
+<div class="catListTag">
+<h3 class="catListTitle">我的标签</h3>
+<ul>
+<li><a href="http://www.cnblogs.com/jiftle/tag/java/">java</a>(51)</li><li><a href="http://www.cnblogs.com/jiftle/tag/linux/">linux</a>(44)</li><li><a href="http://www.cnblogs.com/jiftle/tag/%E8%BF%90%E7%BB%B4/">运维</a>(43)</li><li><a href="http://www.cnblogs.com/jiftle/tag/c/">c</a>(31)</li><li><a href="http://www.cnblogs.com/jiftle/tag/dotnet/">dotnet</a>(18)</li><li><a href="http://www.cnblogs.com/jiftle/tag/python/">python</a>(18)</li><li><a href="http://www.cnblogs.com/jiftle/tag/%E7%AE%97%E6%B3%95/">算法</a>(17)</li><li><a href="http://www.cnblogs.com/jiftle/tag/%E5%B7%A5%E5%85%B7/">工具</a>(13)</li><li><a href="http://www.cnblogs.com/jiftle/tag/vim/">vim</a>(12)</li><li><a href="http://www.cnblogs.com/jiftle/tag/%E4%BF%A1%E6%81%AF%E5%AE%89%E5%85%A8/">信息安全</a>(11)</li><li><a href="http://www.cnblogs.com/jiftle/tag/">更多</a></li>
+</ul>
+</div></div><div id="sidebar_categories">
+<div id="sidebar_postarchive" class="catListPostArchive sidebar-block">
+<h3 class="catListTitle">随笔档案<span style="font-size:11px;font-weight:normal">(327)</span></h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_0_Link_0" href="https://www.cnblogs.com/jiftle/archive/2018/07.html">2018年7月 (5)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_1" href="https://www.cnblogs.com/jiftle/archive/2018/06.html">2018年6月 (12)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_2" href="https://www.cnblogs.com/jiftle/archive/2018/05.html">2018年5月 (12)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_3" href="https://www.cnblogs.com/jiftle/archive/2018/04.html">2018年4月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_4" href="https://www.cnblogs.com/jiftle/archive/2018/03.html">2018年3月 (3)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_5" href="https://www.cnblogs.com/jiftle/archive/2018/02.html">2018年2月 (14)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_6" href="https://www.cnblogs.com/jiftle/archive/2018/01.html">2018年1月 (6)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_7" href="https://www.cnblogs.com/jiftle/archive/2017/12.html">2017年12月 (8)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_8" href="https://www.cnblogs.com/jiftle/archive/2017/11.html">2017年11月 (19)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_9" href="https://www.cnblogs.com/jiftle/archive/2017/10.html">2017年10月 (16)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_10" href="https://www.cnblogs.com/jiftle/archive/2017/09.html">2017年9月 (20)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_11" href="https://www.cnblogs.com/jiftle/archive/2017/08.html">2017年8月 (11)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_12" href="https://www.cnblogs.com/jiftle/archive/2017/07.html">2017年7月 (30)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_13" href="https://www.cnblogs.com/jiftle/archive/2017/06.html">2017年6月 (28)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_14" href="https://www.cnblogs.com/jiftle/archive/2017/05.html">2017年5月 (18)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_15" href="https://www.cnblogs.com/jiftle/archive/2017/04.html">2017年4月 (37)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_16" href="https://www.cnblogs.com/jiftle/archive/2017/03.html">2017年3月 (38)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_17" href="https://www.cnblogs.com/jiftle/archive/2017/02.html">2017年2月 (32)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_18" href="https://www.cnblogs.com/jiftle/archive/2017/01.html">2017年1月 (13)</a> </li>
+
+<li><a id="CatList_LinkList_0_Link_19" href="https://www.cnblogs.com/jiftle/archive/2016/07.html">2016年7月 (2)</a> </li>
+
+</ul>
+
+</div>
+
+<div id="sidebar_links944306" class="catList sidebar-block">
+<h3 class="catListTitle">友情链接</h3>
+
+<ul>
+
+<li><a id="CatList_LinkList_1_Link_0" href="http://blog.csdn.net/jiuqiyuliang" rel="nofollow">csdn技术专栏</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_1" href="http://man.linuxde.net/" rel="nofollow">Linux命令大全</a> </li>
+<li class="c_b_p_link_desc">Linux命令大全</li>
+<li><a id="CatList_LinkList_1_Link_2" href="http://blog.csdn.net/jiftlixu" rel="nofollow">我的CSDN博客</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_3" href="http://yctxkj.oschina.io/happyblog/" rel="nofollow">我的开源博客</a> </li>
+
+<li><a id="CatList_LinkList_1_Link_4" href="http://zhangtielei.com/" rel="nofollow">张铁蕾的博客</a> </li>
+<li class="c_b_p_link_desc">博客模板很好，极简风格。</li>
+</ul>
+
+</div>
+
+</div><div id="sidebar_recentcomments" class="sidebar-block"><div id="recent_comments_wrap">
+<div class="catListComment">
+<h3 class="catListTitle">最新评论</h3>
+
+	<div id="RecentCommentsBlock"><ul>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/jiftle/p/6357842.html#4003437">1. Re:eclipse下properties配置文件中文乱码解决</a></li>
+        <li class="recent_comment_body">装了之后，其他properties文件都显示正常了，唯独有一个还是乱码</li>
+        <li class="recent_comment_author">--aaa76366602</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/jiftle/p/6655524.html#3984758">2. Re:vim常用技巧</a></li>
+        <li class="recent_comment_body">always every day</li>
+        <li class="recent_comment_author">--jiftle</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/jiftle/p/6357842.html#3947725">3. Re:eclipse下properties配置文件中文乱码解决</a></li>
+        <li class="recent_comment_body">@待我称帝封你为后 不客气，这个问题很常见。...</li>
+        <li class="recent_comment_author">--jiftle</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/jiftle/p/7078422.html#3781877">4. Re:某某水表-M1卡数据算法分析</a></li>
+        <li class="recent_comment_body">1.67元 00 01 67 00 00 61 0E 85 00 00 00 00 00 00 00 002.03元 00 02 03 00 00 2B 01 85 00 00 0......</li>
+        <li class="recent_comment_author">--无言001</li>
+        <li class="recent_comment_title"><a href="http://www.cnblogs.com/jiftle/p/6357842.html#3753506">5. Re:eclipse下properties配置文件中文乱码解决</a></li>
+        <li class="recent_comment_body">谢谢楼主 成功解决</li>
+        <li class="recent_comment_author">--待我称帝封你为后</li>
+</ul>
+</div>
+</div>
+</div></div><div id="sidebar_topviewedposts" class="sidebar-block"><div id="topview_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">阅读排行榜</h3>
+	<div id="TopViewPostsBlock"><ul><li><a href="https://www.cnblogs.com/jiftle/p/6618851.html">1. 淘宝-保证金缴纳的类目及对应金额(2017.3.25)(13459)</a></li><li><a href="https://www.cnblogs.com/jiftle/p/6723697.html">2. IIS短文件名泄露漏洞危害及防范方法(转)(4689)</a></li><li><a href="https://www.cnblogs.com/jiftle/p/7903762.html">3. 用实例给新手讲解RSA加密算法(4204)</a></li><li><a href="https://www.cnblogs.com/jiftle/p/7156057.html">4. Eclipse开发C/C++之使用技巧小结，写给新手(3901)</a></li><li><a href="https://www.cnblogs.com/jiftle/p/7026357.html">5. M1卡说明及使用proxmark3破解方法(3462)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topcommentedposts" class="sidebar-block"><div id="topfeedback_posts_wrap">
+<div class="catListFeedback">
+<h3 class="catListTitle">评论排行榜</h3>
+	<div id="TopFeedbackPostsBlock"><ul><li><a href="https://www.cnblogs.com/jiftle/p/6357842.html">1. eclipse下properties配置文件中文乱码解决(3)</a></li><li><a href="https://www.cnblogs.com/jiftle/p/6351706.html">2. 慕课网原来的免费路径网址，快收藏。(2)</a></li><li><a href="https://www.cnblogs.com/jiftle/p/7078422.html">3. 某某水表-M1卡数据算法分析(1)</a></li><li><a href="https://www.cnblogs.com/jiftle/p/6655524.html">4. vim常用技巧(1)</a></li></ul></div>
+</div>
+</div></div><div id="sidebar_topdiggedposts" class="sidebar-block"><div id="topdigg_posts_wrap">
+<div class="catListView">
+<h3 class="catListTitle">推荐排行榜</h3>
+<div id="TopDiggPostsBlock"><ul><li><a href="https://www.cnblogs.com/jiftle/p/6351706.html">1. 慕课网原来的免费路径网址，快收藏。(2)</a></li><li><a href="https://www.cnblogs.com/jiftle/p/6399791.html">2. jfinal控制器添加多个拦截器(1)</a></li><li><a href="https://www.cnblogs.com/jiftle/p/7158291.html">3. Http压测工具wrk使用指南(1)</a></li><li><a href="https://www.cnblogs.com/jiftle/p/9244693.html">4. 程序员的自我进化——补上最短的那块情商木板(1)</a></li><li><a href="https://www.cnblogs.com/jiftle/p/6357842.html">5. eclipse下properties配置文件中文乱码解决(1)</a></li></ul></div>
+</div></div></div></div><script type="text/javascript">loadBlogSideColumn();</script>
+			</div>
+			
+		</div><!--end: sideBarMain -->
+	</div><!--end: sideBar 侧边栏容器 -->
+	<div class="clear"></div>
+	</div><!--end: main -->
+	<div class="clear"></div>
+	<div id="footer">
+		
+<!--done-->
+Copyright ©2018 jiftle
+	</div><!--end: footer -->
+</div><!--end: home 自定义的最大容器 -->
+
+
+<script type="text/javascript">getFollowStatus('db0a2cfb-5570-df11-ba8f-001cf0cd104b')</script></body></html>
