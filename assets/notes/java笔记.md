@@ -20,3 +20,13 @@
   * java并发包原子性操作
 
 * 面向对象的编程语言有封装、继承、抽象、多态等4个主要的特征
+
+* 线程sleep和wait区别
+  * sleep是Thread类的方法,wait是Object类中定义的方法
+  * Thread.sleep不会导致锁行为的改变
+  * wait会释放对象锁，必须在synchronized block中执行否则会在programme runtime时扔出"java.lang.IllegalMonitorStateException"异常
+  * Thread.sleep和Object.wait都会暂停当前的线程，对于CPU资源来说，不管是哪种方式暂停的线程，都表示它暂时不再需要CPU的执行时间。OS会将执行时间分配给其它线程。区别是，调用wait后，需要别的线程执行notify/notifyAll才能够重新获得CPU执行时间
+  * sleep 让线程从 [running] -> [阻塞态] 时间结束/interrupt -> [runnable]
+  * wait 让线程从 [running] -> [等待队列]notify  -> [锁池] -> [runnable]
+  * sleep是一个线程的运行状态控制,wait一个是线程之间的通讯的问题
+  * yield让当前运行进程回到可运行状态，也不会释放对象锁
