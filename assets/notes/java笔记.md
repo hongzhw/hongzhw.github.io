@@ -30,3 +30,8 @@
   * wait 让线程从 [running] -> [等待队列]notify  -> [锁池] -> [runnable]
   * sleep是一个线程的运行状态控制,wait一个是线程之间的通讯的问题
   * yield让当前运行进程回到可运行状态，也不会释放对象锁
+
+## 容器
+
+* hashmap和treemap的数据结构以及时间复杂度
+* hashmap如何解决哈希冲突
