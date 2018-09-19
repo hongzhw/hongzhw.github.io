@@ -45,6 +45,18 @@
   * sleep是一个线程的运行状态控制,wait一个是线程之间的通讯的问题
   * yield让当前运行进程回到可运行状态，也不会释放对象锁
 
+* java 反射
+  * java 反射都在包 java.lang.reflect
+  * java 反射可以实现动态多态，也可以修改没有对外修改接口的属性
+  * 通过反射可以获得类的内部信息，包括其 modifiers（诸如 public、static等）、superclass（例如 Object ）、实现之interfaces（例如 Cloneable ），也包括 fields 和 methods 的所有信息，并可于运行时改变 fields 内容或唤起 methods。
+  * [java 启动过程](https://blog.csdn.net/u010325193/article/details/80865672)
+  * [反射代码例子](https://blog.csdn.net/sinat_38259539/article/details/71799078)
+
+* 泛型的类型擦除
+  * java 编译器通过先检查代码中泛型的类型，再进行类型擦除，保证了只能使用泛型变量限定的类型
+  * 编译之后，进行了泛型擦除，字节码中没有泛型信息
+  * [类型擦除带来的问题](https://www.cnblogs.com/xll1025/p/6489088.html)
+
 ## 容器
 
 * hashmap和treemap的数据结构以及时间复杂度
