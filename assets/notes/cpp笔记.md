@@ -182,6 +182,10 @@
 
 ## 其他
 
+* c++11 新特性
+  * nullptr：解决 NULL 无法正确重载问题
+  * [c++11 常用特性总结](https://www.cnblogs.com/feng-sc/p/5710724.html)
+
 * go 与 cpp 的区别
   * go 用于网络编程，语法统一，没有 cpp 那些炫技的地方，开发速度快
   * go 内存管理由 gc 负责，不用程序员自己负责
@@ -191,4 +195,4 @@
 
 * 参考书籍《深度探索c++对象模型》、《STL源码剖析》
 * [常见c++面试题](https://www.cnblogs.com/LUO77/p/5771237.html)
-* [参考链接](https://github.com/bilibiliChangKai/My-Note/blob/master/%E9%9D%A2%E8%AF%95/TX%E9%9D%A2%E8%AF%95.md)
+* [胡子昂腾讯面试笔记](https://github.com/bilibiliChangKai/My-Note/blob/master/%E9%9D%A2%E8%AF%95/TX%E9%9D%A2%E8%AF%95.md)
