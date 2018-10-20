@@ -184,7 +184,12 @@
 
 * c++11 新特性
   * nullptr：解决 NULL 无法正确重载问题
+  * 类型推导 auto，可以写出简单的迭代器循环
+  * 基于范围的 for 循环，例如：for(auto index : arr){}
+  * thread：语言级线程支持
+  * 新增容器：array、unorder_map、unorder_set
   * [c++11 常用特性总结](https://www.cnblogs.com/feng-sc/p/5710724.html)
+  * [c++11 新特性一览](https://blog.csdn.net/jiange_zh/article/details/79356417)
 
 * go 与 cpp 的区别
   * go 用于网络编程，语法统一，没有 cpp 那些炫技的地方，开发速度快
