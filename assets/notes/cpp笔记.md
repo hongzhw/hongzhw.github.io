@@ -81,7 +81,14 @@
 
 * auto 和 static
   * auto 是由程序自动控制变量的生存周期，变量在进入作用域的时候被分配，离开作用域的时候被释放； static 在程序初始化时被分配，直到程序退出前才被释放
-  * static 声明变量或者函数，实现不需要 static修饰
+  * static 声明变量或者函数，实现不需要 static 修饰
+
+* static 局部变量
+  * 静态局部变量存储在静态存储区内
+  * 静态局部变量生存周期为整个源程序周期，不随函数结束而结束
+  * 静态局部变量不为其他函数可见
+  * 静态局部变量只初始化一次，下次进入函数使用上一次的值
+  * [static详解](https://blog.csdn.net/zkangaroo/article/details/61202533)
 
 * cpp static 和 java static 的异同
   * 同：都可以用来修饰方法、变量
@@ -131,6 +138,13 @@
   * malloc 与 free是 C++/C 语言的标准库函数(stdlib.h)，new/delete 是 C++ 的运算符。它们都可用于申请动态内存和释放内存。
   * 对于非内部数据类型的对象而言，光用 malloc/free 无法满足动态对象的要求。对象在创建的同时要自动执行构造函数，对象在消亡之前要自动执行析构函数。
   * new 可以认为是 malloc 加构造函数的执行。new 出来的指针是直接带类型信息的。而 malloc 返回的都是 void 指针。
+
+* typedef 和 #define 的区别
+  * #define 宏定义发生在预处理阶段，简单地进行字符串替换，没有类型检查
+  * typedef 发生在编译阶段，会进行类型检查
+  * typedef 只是定义类型的别名，定义与平台无关的数据类型，#define 不只是可以为类型取别名，还可以定义常量等
+  * #define 没有作用域，只要之前预定义过的宏在之后都可以使用；typedef 有作用域
+  * [typedef 和 #define 的区别](https://blog.csdn.net/luoweifu/article/details/41630195)
 
 ## 虚函数
 
